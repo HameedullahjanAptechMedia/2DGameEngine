@@ -6,28 +6,28 @@
 
 int main()
 {
-    Vec2 x1(100,100);
-    Vec2 x2(200,200);
+    Vec2 x1(100, 100);
+    Vec2 x2(200, 200);
     Vec2 res;
     res = x1 + x2;
     std::cout << res.x << "," << res.y;
 
- /*   sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML works!");
-    sf::CircleShape shape(50.f);
-    shape.setFillColor(sf::Color::Green);
-    shape.setPosition(300.0f, 300.0f);
-    while (window.isOpen())
-    {
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-        window.clear();
-        window.draw(shape);
-        window.display();
-    }*/
+    /*   sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML works!");
+       sf::CircleShape shape(50.f);
+       shape.setFillColor(sf::Color::Green);
+       shape.setPosition(300.0f, 300.0f);
+       while (window.isOpen())
+       {
+           sf::Event event;
+           while (window.pollEvent(event))
+           {
+               if (event.type == sf::Event::Closed)
+                   window.close();
+           }
+           window.clear();
+           window.draw(shape);
+           window.display();
+       }*/
     return 0;
 }
 
