@@ -3,15 +3,30 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "Vec2.h"
+#include <fstream>
+#include "shapeShooterGame.h"
 
 int main()
 {
-    Vec2 x1(100, 100);
+    shapeShooterGame g("shapeShooterConfig.txt");
+   g.run();
+   // sf::VideoMode(1280, 720), "Shape Shooter");
+   // sf::setFramerateLimit(60);
+    /*Vec2 x1(100, 100);
     Vec2 x2(200, 200);
     Vec2 res;
     res = x1 + x2;
-    std::cout << res.x << "," << res.y;
+    std::cout << res.x << "," << res.y;*/
+   
+   // shapeShooterGame::shapeShooterGame.run();// run();// init();
+   // CR, FR, FG, FB, OR, OG, OB, OT, V;
+   // std::string first;
+   ///
 
+
+    ///
+
+   
     /*   sf::RenderWindow window(sf::VideoMode(1920, 1080), "SFML works!");
        sf::CircleShape shape(50.f);
        shape.setFillColor(sf::Color::Green);
