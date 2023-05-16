@@ -25,15 +25,15 @@ struct Player {
     std::string name;
     int shapeRadius;
     int collisionRadius;
-    int speed;
-    int jump_height;
-    int gravity;
-    int health;
-    int r;
-    int g;
-    int b;
-    int damage;
-    float s;
+    int sides;
+    int shapr_color_r;
+    int shape_color_g;
+    int shape_color_b;
+    int outline_color_r;
+    int outline_color_g;
+    int outline_color_b;
+    int outline_thickness;
+    float speed;
 };
 
 struct Enemy {
@@ -98,6 +98,8 @@ class shapeShooterGame
 	void spawnSmallEnemies(std::shared_ptr<Entity> entity);
 	void spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mousePos);
 	void spawnSpecialWeapon(std::shared_ptr<Entity> entity);
+
+    
 
 public:
 	shapeShooterGame(const std::string& config);

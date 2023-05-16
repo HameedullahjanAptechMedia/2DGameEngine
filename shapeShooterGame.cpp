@@ -21,12 +21,15 @@ void shapeShooterGame::init(const std::string& config)
 
     inFile >> window.name >> window.width >> window.height >> window.fps >> window.vsync;
     inFile >> font.name >> font.path >> font.size >> font.r >> font.g >> font.b;
-    inFile >> player.name >> player.shapeRadius >> player.collisionRadius >> player.speed >> player.jump_height >> player.gravity;
-    inFile >> player.health >> player.r >> player.g >> player.b >> player.damage >> player.s;
+    inFile >> player.name >> player.shapeRadius >> player.collisionRadius >> player.sides >> player.shapr_color_r >> player.shape_color_g;
+    inFile >> player.shape_color_b >> player.outline_color_r >> player.outline_color_g >> player.outline_color_b >> player.outline_thickness >> player.speed;
     inFile >> enemy.name >> enemy.shapeRadius >> enemy.collisionRadius >> enemy.speed >> enemy.health >> enemy.r >> enemy.g >> enemy.b;
     inFile >> enemy.damage >> enemy.cooldown >> enemy.aggro_range >> enemy.smin >> enemy.smax;
     inFile >> bullet.name >> bullet.width >> bullet.height >> bullet.speed >> bullet.r >> bullet.g >> bullet.b;
     inFile >> bullet.damage >> bullet.duration >> bullet.range >> bullet.angle>>bullet.L>>bullet.S;
+    m_playerConfig = player;
+    m_enemyConfig = enemy;
+    m_bulletConfig = bullet;
 
     inFile.close();
 
@@ -34,8 +37,8 @@ void shapeShooterGame::init(const std::string& config)
 
     std::cout << font.name << " " << font.path << " " << font.size << " " << font.r << " " << font.g << " " << font.b <<std::endl;
 
-    std::cout << player.name << " " << player.shapeRadius << " " << player.collisionRadius << " " << player.speed << " " << player.jump_height << " " << player.gravity
-        << " " << player.health << " " << player.r << " " << player.g << " " << player.b << " " << player.damage << " " << player.s << std::endl;
+    std::cout << player.name << " " << player.shapeRadius << " " << player.collisionRadius << " " << player.sides << " " << player.shapr_color_r << " " << player.shape_color_g
+        << " " << player.shape_color_b << " " << player.outline_color_r << " " << player.outline_color_g << " " << player.outline_color_b << " " << player.outline_thickness << " " << player.speed << std::endl;
 
     std::cout << enemy.name << " " << enemy.shapeRadius << " " << enemy.collisionRadius << " " << enemy.speed << " " << enemy.health << " " << enemy.r << " " << enemy.g << " " << enemy.b
         << " " << enemy.damage << " " << enemy.cooldown << " " << enemy.aggro_range << " " << enemy.smin << " " << enemy.smax<<std::endl;
@@ -43,8 +46,8 @@ void shapeShooterGame::init(const std::string& config)
     std::cout << bullet.name << " " << bullet.width << " " << bullet.height << " " << bullet.speed << " " << bullet.r << " " << bullet.g << " " << bullet.b
         << " " << bullet.damage << " " << bullet.duration << " " << bullet.range << " " << bullet.angle << " " << bullet.L << " " << bullet.S << std::endl;
 
-	m_window.create(sf::VideoMode(1280, 720), "Shape Shooter");
-	m_window.setFramerateLimit(60);
+	m_window.create(sf::VideoMode(window.width, window.height), "Shape Shooter");
+	m_window.setFramerateLimit(window.fps);
 	spawnPlayer();
 }
 
@@ -54,8 +57,26 @@ void shapeShooterGame::setPaused(bool paused)
 
 void shapeShooterGame::sMovement()
 {
-    if (m_player->cInput->up) {
-        m_player->cTransform->velocity.y = -5;
+    /*for (auto e : m_entities.getEntities()) {
+        e->cTransform->velocity = {0,0};
+    }*/
+    m_player->cTransform->velocity = { 0,0 };
+   
+    if (m_player->cInput->up && m_player->cTransform->pos.y > m_playerConfig.shapeRadius) {
+        m_player->cTransform->velocity.y = -m_playerConfig.speed;
+    }
+    if (m_player->cInput->down && m_player->cTransform->pos.y < (m_window.getSize().y- m_playerConfig.shapeRadius)) {
+        m_player->cTransform->velocity.y = m_playerConfig.speed;
+    }
+    if (m_player->cInput->right && m_player->cTransform->pos.x < (m_window.getSize().x - m_playerConfig.shapeRadius)) {
+        m_player->cTransform->velocity.x = m_playerConfig.speed;
+    }
+    if (m_player->cInput->left && m_player->cTransform->pos.x > m_playerConfig.shapeRadius) {
+        m_player->cTransform->velocity.x = -m_playerConfig.speed;
+    }
+    for (auto e : m_entities.getEntities()) {
+        e->cTransform->pos.x += e->cTransform->velocity.x;
+        e->cTransform->pos.y += e->cTransform->velocity.y;
     }
 }
 
@@ -73,17 +94,20 @@ void shapeShooterGame::sUserInput()
                 switch (event.key.code)
                 {
                 case sf::Keyboard::W:
-                    std::cout << "W key pressed\n";
+                   // std::cout << "W key pressed\n";
                     m_player->cInput->up = true;
                     break;
                 case sf::Keyboard::A:
-                    std::cout << "A key pressed\n";
+                  //  std::cout << "A key pressed\n";
+                    m_player->cInput->left = true;
                     break;
                 case sf::Keyboard::S:
-                    std::cout << "S key pressed\n";
+                   // std::cout << "S key pressed\n";
+                    m_player->cInput->down = true;
                     break;
                 case sf::Keyboard::D:
-                    std::cout << "D key pressed\n";
+                   // std::cout << "D key pressed\n";
+                    m_player->cInput->right = true;
                     break;
                 default:
                     break;
@@ -94,17 +118,20 @@ void shapeShooterGame::sUserInput()
                 switch (event.key.code)
                 {
                 case sf::Keyboard::W:
-                    std::cout << "W key released\n";
+                   // std::cout << "W key released\n";
                     m_player->cInput->up = false;
                     break;
                 case sf::Keyboard::A:
-                    std::cout << "A key released\n";
+                   // std::cout << "A key released\n";
+                    m_player->cInput->left = false;
                     break;
                 case sf::Keyboard::S:
-                    std::cout << "S key released\n";
+                  //  std::cout << "S key released\n";
+                    m_player->cInput->down = false;
                     break;
                 case sf::Keyboard::D:
-                    std::cout << "D key released\n";
+                  //  std::cout << "D key released\n";
+                    m_player->cInput->right = false;
                     break;
                 default:
                     break;
@@ -116,7 +143,8 @@ void shapeShooterGame::sUserInput()
                 if (event.mouseButton.button == sf::Mouse::Left)
                 {
                     std::cout << "left mouse button clicked";
-                    // call spawn bullet here
+                    auto entity = m_entities.addEntity("bullet");
+                    spawnBullet(entity, Vec2(event.mouseButton.x, event.mouseButton.y));
                 }
                 if (event.mouseButton.button == sf::Mouse::Right)
                 {
@@ -129,6 +157,13 @@ void shapeShooterGame::sUserInput()
 
 void shapeShooterGame::sLifespan()
 {
+    for (auto e : m_entities.getEntities("bullet")) {
+        e->cLifespan->remaining--;
+        if (e->cLifespan->remaining <= 0)
+        {
+            e->destroy();
+        }
+    }
 }
 
 void shapeShooterGame::sRender()
@@ -145,6 +180,10 @@ void shapeShooterGame::sRender()
 
 void shapeShooterGame::sEnemySpawner()
 {
+    if (m_currentFrame - m_lastEnemySpawnTime > 10)
+    {
+       // spawnEnemy();
+    }
 }
 
 void shapeShooterGame::sCollision()
@@ -153,15 +192,27 @@ void shapeShooterGame::sCollision()
 
 void shapeShooterGame::spawnPlayer()
 {
+    float ex = m_window.getSize().x/2;
+    float ey = m_window.getSize().y/2;
     auto entity = m_entities.addEntity("player");
-    entity->cTransform = std::make_shared<CTransform>(Vec2(200.0f, 200.0f), Vec2(1.0f, 1.0f), 0.0f);
-    entity->cShape = std::make_shared<CShape>(32.0f, 8, sf::Color(10, 10, 10), sf::Color(255, 0, 0),4.0f);
+    entity->cTransform = std::make_shared<CTransform>(Vec2(ex, ey), Vec2(0.0f, 0.0f), 0.0f);
+    entity->cShape = std::make_shared<CShape>(m_playerConfig.shapeRadius, m_playerConfig.sides, sf::Color(m_playerConfig.shapr_color_r, m_playerConfig.shape_color_g, m_playerConfig.shape_color_b)
+        , sf::Color(m_playerConfig.outline_color_r, m_playerConfig.outline_color_g, m_playerConfig.outline_color_b),m_playerConfig.outline_thickness);
+    entity->cInput = std::make_shared<Cinput>();
     m_player = entity; // assign this entity to player for easily accessing the player
 
 }
 
 void shapeShooterGame::spawnEnemy()
 {
+    auto entity = m_entities.addEntity("enemy");
+    float ex = rand() % m_window.getSize().x;
+    float ey = rand() % m_window.getSize().y;
+
+    entity->cTransform = std::make_shared<CTransform>(Vec2(ex,ey), Vec2(0.0f,0.0f),0.0f);
+    entity->cShape = std::make_shared<CShape>(16.0f, 3, sf::Color(0, 0, 255), sf::Color(255, 255, 255), 4.0f);
+    
+    m_lastEnemySpawnTime = m_currentFrame;
 }
 
 void shapeShooterGame::spawnSmallEnemies(std::shared_ptr<Entity> entity)
@@ -170,6 +221,13 @@ void shapeShooterGame::spawnSmallEnemies(std::shared_ptr<Entity> entity)
 
 void shapeShooterGame::spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mousePos)
 {
+    
+    entity->cTransform = std::make_shared<CTransform>(Vec2(m_player->cTransform->pos.x, m_player->cTransform->pos.y), Vec2(0,0),0);
+    entity->cShape = std::make_shared<CShape>(16.0f, 3, sf::Color(0, 0, 255), sf::Color(255, 255, 255), 4.0f);
+    entity->cLifespan = std::make_shared<CLifeSpan>(10);
+    float speed = 0.05;
+    entity->cTransform->velocity = { (mousePos.x - m_player->cTransform->pos.x)*speed, (mousePos.y - m_player->cTransform->pos.y)*speed};
+  //  entity->cTransform->velocity.y = mousePos.y;
 }
 
 void shapeShooterGame::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
@@ -189,6 +247,7 @@ void shapeShooterGame::run()
         sCollision();
         sUserInput();
         sRender();
+        sLifespan();
         m_currentFrame++;
     }
 }
